@@ -11,29 +11,56 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+update widget with ValueNotifier that has Status value
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+import status_builder
+
+```yaml
+dependencies:
+    status_builder:
+        git:
+            url: https://github.com/cho8833/status_builder
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+example
 
 ```dart
-const like = 'sample';
+class ExampleProvider {
+
+  ValueNotifier<Status> fetchStatus = ValueNotifier(Status.idle);
+
+  Future<void> fetch() async {
+    fetchStatus.value = Status.loading;
+    repository.fetchData().then((value) {
+      print(value);
+      fetchStatus.value = Status.success;
+    }).catchError((e) {
+      fetchStatus.value = Status.fail;
+      throw Exception(e);
+    });
+  }
+}
+
+
+Widget build(BuildContext context) {
+    ExampleProvider provider = context.read<ExampleProvider>
+    return StatusBuilder(
+        statusNotifier: provider.fetchStatus,
+        loadingBuilder: (context) {
+            return const CircularProgressIndicator();
+        },
+        suessBuilder: (context) {
+            return const Text("success");
+        }
+    )
+}
+
 ```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
